@@ -318,8 +318,11 @@ export async function executeWorkflow(
 	const activeExecutions = Container.get(ActiveExecutions);
 
 	// Use draft sub-workflows for manual/chat executions to enable
-	// iterating on sub-workflows without requiring them to be published
-	const useDraftVersion = isManualOrChatExecution(options.executionMode);
+	// iterating on sub-workflows without requiring them to be published.
+	// Use the root execution mode: a nested sub-workflow's own run is 'integrated',
+	// which would otherwise send deeper levels of a manual run to the published version.
+	const rootExecutionMode = additionalData.rootExecutionMode ?? options.executionMode;
+	const useDraftVersion = isManualOrChatExecution(rootExecutionMode);
 
 	const workflowData =
 		options.loadedWorkflowData ??
